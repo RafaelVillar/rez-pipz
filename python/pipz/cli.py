@@ -198,6 +198,7 @@ def _install(opts, extra_args, tempdir):
             pip.deploy(
                 package,
                 path=packagesdir,
+                shim=opts.shim,
                 as_bundle=as_bundle,
             )
 

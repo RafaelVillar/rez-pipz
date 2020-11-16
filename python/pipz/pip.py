@@ -20,6 +20,7 @@ from rez.backport.lru_cache import lru_cache
 from pkg_resources import find_distributions
 
 import os
+import io
 import re
 import sys
 import stat
@@ -412,12 +413,13 @@ bat = """\
 python -u -c "import {module} as m;m.{func}()"
 """
 
+# https://github.com/mottosso/rez-pipz/issues/4#issuecomment-504668495
 shim = """\
-path = python
-args = -u -c "import {module} as m;m.{func}()"
+path = cmd.exe
+args = /c python -u -c "import {module} as m;m.{func}()"
 """
 
-sh = """\
+sh = u"""\
 #!/usr/bin/env python
 import {module} as mod
 mod.{func}()
@@ -471,7 +473,7 @@ def write_console_script(root, executable, command, binary=True):
         with open(fname + ".bat", "w") as f:
             f.write(bat.format(**locals()))
 
-    with open(fname, "w") as f:
+    with io.open(fname, 'w', newline='\n') as f:
         f.write(sh.format(**locals()))
 
     st = os.stat(fname)
